@@ -1,8 +1,7 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { EVENT } from "@/lib/config";
 import { music } from "@/lib/music";
 
 const EQ_BARS = [
@@ -11,45 +10,63 @@ const EQ_BARS = [
   { id: "high", height: 8 },
 ];
 
+type Status = "loading" | "ready" | "missing";
+
 /**
  * Nút bật/tắt nhạc nền.
  *
- * Nguồn phát duy nhất là file mp3 trong public/audio, phát qua thẻ <audio>.
- * Cố tình KHÔNG nhúng YouTube: khi mở link từ Zalo/Messenger, các app này
- * dùng WKWebView và sẽ tự mở video YouTube toàn màn hình rồi không phát nhạc.
+ * Nguồn phát duy nhất là file âm thanh trong public/audio, phát qua thẻ <audio>.
+ * Cố tình KHÔNG nhúng YouTube: khi mở link từ Zalo/Messenger, các app này dùng
+ * WKWebView và sẽ tự mở video YouTube toàn màn hình rồi không phát nhạc.
+ *
+ * Không có bất kỳ dòng chữ nào bắt người dùng phải bấm — chạm vào bất kỳ đâu trên
+ * màn hình là nhạc chạy (xem app/page.tsx).
  */
 export default function MusicControl() {
   const [playing, setPlaying] = useState(false);
-  const [missing, setMissing] = useState(false);
+  const [status, setStatus] = useState<Status>("loading");
 
   useEffect(() => {
-    music.probe();
+    let alive = true;
+    music.init().then((found) => {
+      if (alive) setStatus(found ? "ready" : "missing");
+    });
     return music.onState(setPlaying);
   }, []);
 
   const handleError = useCallback(() => {
-    setMissing(true);
+    // File vừa nạp không phát được (ví dụ trình duyệt không giải mã được định
+    // dạng đó) → lib/music tự thử file tiếp theo; chỉ khi hết danh sách mới báo
+    // thiếu file.
+    music.handleError().then((missing) => {
+      if (missing) setStatus("missing");
+    });
   }, []);
 
-  const toggle = () => {
-    if (playing) {
+  const toggle = (e: React.MouseEvent) => {
+    // Ngăn sự kiện nổi lên window: nếu lọt lên đó, page.tsx sẽ gửi "play" và
+    // ngay lập tức phát lại sau khi người dùng vừa bấm tắt.
+    e.stopPropagation();
+    if (music.playing) {
       music.send("pause");
-      setPlaying(false);
     } else {
       music.send("play");
-      setPlaying(true);
     }
   };
 
   return (
     <>
-      {/* Nguồn phát duy nhất: file mp4/mp3 nội bộ, không giao diện, không redirect */}
+      {/*
+        Nguồn phát duy nhất: file âm thanh nội bộ trong public/audio, không giao
+        diện, không redirect. Không khai báo src cứng ở đây — lib/music tự dò
+        xem thư mục có file nào rồi mới gán, nên chỉ cần thả file vào là chạy,
+        không phải sửa code.
+      */}
       <audio
         ref={(el) => {
           if (el) el.volume = 0.45;
           music.register(el);
         }}
-        src={EVENT.audioSrc}
         loop
         preload="auto"
         playsInline
@@ -58,7 +75,7 @@ export default function MusicControl() {
         onError={handleError}
       />
 
-      {!missing && (
+      {status === "ready" && (
         <motion.button
           type="button"
           onClick={toggle}
@@ -66,7 +83,7 @@ export default function MusicControl() {
           aria-pressed={playing}
           initial={{ opacity: 0, scale: 0.6 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
+          transition={{ duration: 0.5 }}
           className="fixed right-4 z-50 flex h-11 w-11 items-center justify-center rounded-full border border-gold/60 bg-white/70 text-gold-deep shadow-md backdrop-blur-md"
           style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom))" }}
           whileTap={{ scale: 0.9 }}

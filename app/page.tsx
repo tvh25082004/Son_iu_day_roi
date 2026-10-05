@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Cover from "@/components/Cover";
 import EnvelopeOpening from "@/components/EnvelopeOpening";
@@ -19,15 +19,17 @@ type Stage = "cover" | "opening" | "open";
 
 export default function Page() {
   const [stage, setStage] = useState<Stage>("cover");
-  const gestureRef = useRef(false);
 
   // iOS chỉ cho phát nhạc khi lệnh phát nằm trong user gesture. Người dùng có
   // thể chạm bất kỳ đâu trên màn hình (kể cả lúc đang xem bìa thiệp) để bắt đầu
-  // nhạc, nên nghe bắt kỳ chạm nào cũng gửi lệnh phát. Mọi chạm sau đó bị bỏ qua
-  // để không phát lại từ đầu.
+  // nhạc, nên nghe bắt kỳ chạm nào cũng gửi lệnh phát.
+  //
+  // Không dùng cờ "chỉ chạm một lần": nếu người dùng chạm trước lúc file nhạc
+  // kịp tải xong thì cờ đó sẽ khóa vĩnh viễn và nhạc không bao giờ chạy. Gửi lệnh
+  // phát lại hoàn toàn vô hại — HTMLAudioElement không phát lại từ đầu khi đã
+  // phát, và nút bật/tắt đã chặn sự kiện riêng (xem MusicControl).
   const primeAudio = useCallback(() => {
-    if (gestureRef.current) return;
-    gestureRef.current = true;
+    if (music.playing) return;
     music.send("play");
   }, []);
 
