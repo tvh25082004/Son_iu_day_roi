@@ -85,7 +85,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           whileTap={{ scale: 0.96 }}
           className="shimmer mt-12 rounded-full border border-gold/70 bg-white/55 px-9 py-4 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold-deep shadow-[0_12px_44px_-14px_rgba(160,127,62,0.55)] backdrop-blur-sm transition-colors hover:bg-white/85"
         >
-          Mở thiệp mời
+          Mở thiệp mời tiệc
         </motion.button>
       </div>
 
