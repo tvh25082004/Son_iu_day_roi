@@ -10,9 +10,8 @@ export const EVENT = {
   mapsUrl:
     "https://www.google.com/maps/search/?api=1&query=" +
     encodeURIComponent("Đại Việt Palace, 145 Dương Đình Nghệ"),
-  // Nhạc nền: đặt file .mp3/.m4a vào public/audio/ để chỉ phát âm thanh,
-  // không bao giờ mở video YouTube trên điện thoại.
+  // Nhạc nền: đặt file .mp3 vào public/audio/ và khai báo tên file ở đây.
+  // Bắt buộc phải là file âm thanh — KHÔNG dùng YouTube, vì khi mở link từ
+  // Zalo/Messenger (WKWebView) YouTube sẽ tự mở video toàn màn hình.
   audioSrc: "/audio/son-birthday.mp3",
-  // Fallback khi không tìm thấy file audio (dùng iframe YouTube kích thước 1×1)
-  youtubeId: "8Fid-rNWeho",
 } as const;

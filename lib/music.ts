@@ -2,16 +2,11 @@
 
 import { EVENT } from "./config";
 
-export type MusicCommand = "play" | "pause" | "toggle";
-
 type StateListener = (playing: boolean) => void;
-type CommandListener = (cmd: MusicCommand) => void;
 
 let node: HTMLAudioElement | null = null;
-let fileWorks = Boolean(EVENT.audioSrc);
 let playing = false;
 
-const commandListeners = new Set<CommandListener>();
 const stateListeners = new Set<StateListener>();
 
 function emitState() {
@@ -19,21 +14,18 @@ function emitState() {
 }
 
 /**
- * Bus điều khiển nhạc nền.
+ * Điều khiển nhạc nền — chỉ dùng thẻ <audio> với file mp3 trong public/audio.
  *
- * iOS chỉ cho phát âm thanh khi phát lệnh nằm trong user gesture (tức là ngay
- * trong sự kiện click của nút "Mở thiệp mời"). Nếu gọi play() trong useEffect
- * sau đó thì iOS sẽ bỏ qua và nhạc không bao giờ lên. Vì vậy lệnh phát được
- * gửi từ đúng handler của nút, rồi bus này định tuyến tới đúng player.
+ * KHÔNG dùng iframe YouTube: các ứng dụng nhắn tin (Zalo, Messenger) mở link
+ * bằng WKWebView và sẽ tự mở video YouTube toàn màn hình, đồng thời chặn phát
+ * âm thanh. Vì vậy toàn bộ player YouTube đã bị gỡ khỏi dự án.
+ *
+ * iOS chỉ cho phát âm thanh khi lệnh phát nằm trong user gesture, nên
+ * music.send("play") được gọi từ đúng handler của nút "Mở thiệp mời".
  */
 export const music = {
   get playing() {
     return playing;
-  },
-
-  /** File mp3 trong public/audio có dùng được không. */
-  get fileAvailable() {
-    return fileWorks;
   },
 
   register(el: HTMLAudioElement | null) {
@@ -48,56 +40,35 @@ export const music = {
     };
   },
 
-  onCommand(fn: CommandListener) {
-    commandListeners.add(fn);
-    return () => {
-      commandListeners.delete(fn);
-    };
-  },
-
   setPlaying(value: boolean) {
     playing = value;
     emitState();
   },
 
-  markFileMissing() {
-    fileWorks = false;
-    emitState();
-  },
-
-  /**
-   * Kiểm tra file mp3 ngay khi app mở, trước lúc người dùng bấm gì, để biết
-   * sẽ dùng nguồn nào. Nếu không kiểm tra trước, lúc bấm nút phát thử file
-   * rồi mới chuyển sang YouTube thì lệnh phát đã nằm ngoài gesture → iOS chặn.
-   */
+  /** Kiểm tra file mp3 có tồn tại không, để báo lỗi sớm trong console. */
   probe() {
-    if (typeof window === "undefined") return;
-    if (!EVENT.audioSrc) {
-      fileWorks = false;
-      emitState();
-      return;
-    }
+    if (typeof window === "undefined" || !EVENT.audioSrc) return;
     fetch(EVENT.audioSrc, { method: "HEAD", cache: "no-store" })
       .then((res) => {
-        if (!res.ok) fileWorks = false;
+        if (!res.ok) {
+          console.warn(
+            `[nhạc nền] Không tìm thấy ${EVENT.audioSrc} (HTTP ${res.status}). ` +
+              `Hãy đặt file mp3 vào public/audio/ — xem README.`
+          );
+        }
       })
-      .catch(() => {
-        fileWorks = false;
-      })
-      .finally(emitState);
+      .catch(() => {});
   },
 
-  /** Gửi lệnh phát. Phải gọi bên trong user gesture. */
-  send(cmd: MusicCommand) {
-    if (fileWorks && node) {
-      const isOn = !node.paused;
-      if (cmd === "play" || (cmd === "toggle" && !isOn)) {
-        node.play().catch(() => {});
-        return;
-      }
-      node.pause();
+  /** Gửi lệnh phát. Phải gọi bên trong user gesture thì iOS mới cho phép. */
+  send(action: "play" | "pause" | "toggle") {
+    const el = node;
+    if (!el) return;
+    const isOn = !el.paused;
+    if (action === "play" || (action === "toggle" && !isOn)) {
+      el.play().catch(() => {});
       return;
     }
-    commandListeners.forEach((fn) => fn(cmd));
+    el.pause();
   },
 };
