@@ -28,8 +28,8 @@ export default function Hero() {
           className="mt-5 font-serif text-[17vw] leading-[1.02] text-ink sm:text-7xl"
         >
           <span className="block">Son</span>
-          <span className="block italic text-gold-deep">is turning</span>
-          <span className="block">ONE</span>
+          <span className="block italic text-gold-deep">tròn</span>
+          <span className="block">1 TUỔI</span>
         </motion.h1>
 
         {/* Ảnh hero — vòm sang trọng */}
@@ -87,7 +87,7 @@ export default function Hero() {
         className="absolute inset-x-0 bottom-[calc(env(safe-area-inset-bottom)+1.4rem)] flex flex-col items-center gap-2"
         aria-hidden
       >
-        <span className="text-[10px] uppercase tracking-[0.3em] text-ink/45">Scroll</span>
+        <span className="text-[10px] uppercase tracking-[0.3em] text-ink/45">Cuộn xuống</span>
         <motion.span
           animate={{ y: [0, 7, 0] }}
           transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}

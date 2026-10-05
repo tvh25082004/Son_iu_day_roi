@@ -38,7 +38,7 @@ export default function Page() {
 
         <footer className="relative px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] text-center">
           <p className="text-[10px] uppercase tracking-[0.3em] text-ink/40">
-            Son ✦ {EVENT.year} ✦ Made with love
+            Son ✦ {EVENT.year} ✦ Làm với tất cả yêu thương
           </p>
         </footer>
       </motion.div>

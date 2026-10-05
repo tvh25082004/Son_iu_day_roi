@@ -57,7 +57,7 @@ export default function Countdown() {
     <section className="relative px-6 py-20">
       <Reveal className="mx-auto max-w-md text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-gold-deep">
-          Counting every moment
+          Đếm từng khoảnh khắc
         </p>
         <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
           Đếm ngược đến ngày hạnh phúc
@@ -73,21 +73,21 @@ export default function Countdown() {
                   {v}
                 </div>
                 <span className="mt-2.5 text-[10px] font-semibold uppercase tracking-[0.28em] text-ink/55">
-                  {["Days", "Hours", "Minutes", "Seconds"][i]}
+                  {["Ngày", "Giờ", "Phút", "Giây"][i]}
                 </span>
               </div>
             ))}
           </div>
         ) : parts.done ? (
           <p className="font-serif text-3xl italic text-gold-deep">
-            The celebration has begun ✨
+            Tiệc đã bắt đầu rồi ✨
           </p>
         ) : (
           <div className="flex justify-center gap-3 sm:gap-4" role="timer" aria-label="Đếm ngược đến buổi tiệc">
-            <Digit value={parts.days} label="Days" />
-            <Digit value={parts.hours} label="Hours" />
-            <Digit value={parts.minutes} label="Minutes" />
-            <Digit value={parts.seconds} label="Seconds" />
+            <Digit value={parts.days} label="Ngày" />
+            <Digit value={parts.hours} label="Giờ" />
+            <Digit value={parts.minutes} label="Phút" />
+            <Digit value={parts.seconds} label="Giây" />
           </div>
         )}
       </Reveal>

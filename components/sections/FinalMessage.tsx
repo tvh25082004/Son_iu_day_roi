@@ -17,7 +17,7 @@ export default function FinalMessage() {
 
       <Reveal>
         <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-gold-deep">
-          With love
+          Trân trọng gửi
         </p>
       </Reveal>
 
@@ -37,14 +37,14 @@ export default function FinalMessage() {
 
       <Reveal delay={0.15} className="mx-auto mt-10 max-w-sm">
         <p className="font-serif text-xl leading-relaxed text-ink/90">
-          Thank you for celebrating
+          Cảm ơn bạn đã cùng chúng tôi
           <br />
-          this little milestone with us.
+          chúc mừng cột mốc nhỏ bé này.
         </p>
         <p className="mt-6 font-serif text-2xl italic text-gold-deep">
-          With love,
+          Yêu thương,
         </p>
-        <p className="mt-1 font-serif text-xl text-ink">Son&rsquo;s Family</p>
+        <p className="mt-1 font-serif text-xl text-ink">Gia đình Son</p>
         <p className="mt-6 text-[11px] uppercase tracking-[0.34em] text-ink/55">
           {EVENT.displayDate}
         </p>
@@ -56,7 +56,7 @@ export default function FinalMessage() {
           transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
           className="mt-12 font-serif text-3xl italic text-gold-deep"
         >
-          See you at the party ✨
+          Hẹn gặp bạn tại bữa tiệc ✨
         </motion.p>
       </Reveal>
     </section>

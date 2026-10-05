@@ -9,10 +9,10 @@ export default function PhotoStory() {
     <section id="story" className="relative overflow-hidden py-20">
       <Reveal className="mx-auto max-w-md px-6 text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-gold-deep">
-          Photo story
+          Câu chuyện bằng ảnh
         </p>
         <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
-          One year of Son
+          Một năm của Son
         </h2>
         <p className="mt-3 text-sm text-ink/60">
           Mười hai tháng — một câu chuyện được kể bằng nụ cười.
@@ -69,7 +69,7 @@ export default function PhotoStory() {
 
       <Reveal className="mx-auto mt-16 max-w-md px-6 text-center">
         <p className="font-serif text-2xl italic text-gold-deep">
-          One year of love
+          Một năm đầy yêu thương
         </p>
       </Reveal>
     </section>

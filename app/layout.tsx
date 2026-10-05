@@ -16,16 +16,18 @@ const manrope = Manrope({
   display: "swap",
 });
 
-const SITE_URL = "https://son-iu-day-roi.vercel.app";
+const SITE_URL = "https://sondagiune.vercel.app";
 
 export const metadata: Metadata = {
-  title: "Son Turns One — Lê Nguyễn Khánh Đăng",
-  description: "Join us in celebrating Son's first birthday.",
+  title: "Son tròn 1 tuổi — Lê Nguyễn Khánh Đăng",
+  description:
+    "Mời bạn cùng chung vui trong buổi sinh nhật 1 tuổi của Son — Lê Nguyễn Khánh Đăng.",
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "Son Turns One — Lê Nguyễn Khánh Đăng",
-    description: "Join us in celebrating Son's first birthday.",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Son Turns One" }],
+    title: "Son tròn 1 tuổi — Lê Nguyễn Khánh Đăng",
+    description:
+      "Mời bạn cùng chung vui trong buổi sinh nhật 1 tuổi của Son — Lê Nguyễn Khánh Đăng.",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Son tròn 1 tuổi" }],
     type: "website",
   },
   twitter: {

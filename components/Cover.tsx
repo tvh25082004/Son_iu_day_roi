@@ -37,7 +37,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           transition={{ delay: 0.45, duration: 1.5, ease: EASE }}
           className="mt-6 text-[11px] font-semibold uppercase text-gold-deep"
         >
-          A little miracle
+          Một điều kỳ diệu
         </motion.p>
 
         <motion.h1
@@ -46,7 +46,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           transition={{ delay: 0.95, duration: 1.1, ease: EASE }}
           className="mt-5 font-serif text-[2.6rem] leading-tight sm:text-5xl"
         >
-          is turning <span className="italic text-gold-deep">ONE</span>
+          tròn <span className="italic text-gold-deep">1 TUỔI</span>
         </motion.h1>
 
         <motion.p
@@ -77,7 +77,7 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           whileTap={{ scale: 0.96 }}
           className="shimmer mt-12 rounded-full border border-gold/70 bg-white/55 px-9 py-4 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold-deep shadow-[0_12px_44px_-14px_rgba(160,127,62,0.55)] backdrop-blur-sm transition-colors hover:bg-white/85"
         >
-          Open invitation
+          Mở thiệp mời
         </motion.button>
       </div>
 

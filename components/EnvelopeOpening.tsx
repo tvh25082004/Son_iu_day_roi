@@ -58,7 +58,7 @@ export default function EnvelopeOpening({ onDone }: { onDone: () => void }) {
               <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
               <div className="absolute inset-x-0 bottom-4 text-center">
                 <p className="font-serif text-2xl italic text-white drop-shadow">
-                  Son turns ONE
+                  Son tròn 1 tuổi
                 </p>
                 <p className="mt-1 text-[10px] uppercase tracking-[0.34em] text-white/85">
                   {EVENT.displayDate}
@@ -95,7 +95,7 @@ export default function EnvelopeOpening({ onDone }: { onDone: () => void }) {
           />
           <div className="absolute inset-x-0 bottom-5 z-30 text-center">
             <span className="rounded-full border border-gold/50 px-4 py-1.5 text-[9px] uppercase tracking-[0.34em] text-gold-deep/80">
-              For you
+              Dành cho bạn
             </span>
           </div>
 

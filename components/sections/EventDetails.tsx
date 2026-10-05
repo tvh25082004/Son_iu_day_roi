@@ -9,10 +9,10 @@ export default function EventDetails() {
     <section id="event" className="relative px-6 py-20">
       <Reveal className="mx-auto max-w-md text-center">
         <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-gold-deep">
-          Save the date
+          Ghi lịch
         </p>
         <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
-          11 October 2026
+          Ngày 11 tháng 10 năm 2026
         </h2>
       </Reveal>
 
@@ -43,7 +43,7 @@ export default function EventDetails() {
           <div className="mx-auto my-7 h-px w-24 bg-gradient-to-r from-transparent via-gold/70 to-transparent" />
 
           <p className="text-[11px] uppercase tracking-[0.3em] text-ink/55">
-            First Birthday ✦ family &amp; friends
+            Sinh nhật 1 tuổi ✦ gia đình &amp; bạn bè
           </p>
 
           <motion.a
@@ -54,7 +54,7 @@ export default function EventDetails() {
             whileTap={{ scale: 0.96 }}
             className="mt-8 inline-flex min-h-[44px] items-center rounded-full border border-gold/70 bg-ivory px-8 text-[11px] font-semibold uppercase tracking-[0.3em] text-gold-deep shadow-sm transition-colors hover:bg-champagne/40"
           >
-            View location
+            Xem vị trí
           </motion.a>
         </motion.div>
       </Reveal>
