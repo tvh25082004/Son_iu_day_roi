@@ -49,16 +49,6 @@ export default function FinalMessage() {
           {EVENT.displayDate}
         </p>
       </Reveal>
-
-      <Reveal delay={0.25}>
-        <motion.p
-          animate={{ opacity: [0.75, 1, 0.75] }}
-          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-          className="mt-12 font-serif text-3xl italic text-gold-deep"
-        >
-          Hẹn gặp bạn tại bữa tiệc ✨
-        </motion.p>
-      </Reveal>
     </section>
   );
 }

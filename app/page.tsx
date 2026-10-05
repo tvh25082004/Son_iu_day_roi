@@ -9,6 +9,8 @@ import Countdown from "@/components/sections/Countdown";
 import EventDetails from "@/components/sections/EventDetails";
 import PhotoStory from "@/components/sections/PhotoStory";
 import FinalMessage from "@/components/sections/FinalMessage";
+import ImagesDaily from "@/components/sections/ImagesDaily";
+import WishesAndFarewell from "@/components/sections/WishesAndFarewell";
 import FloatingParticles from "@/components/FloatingParticles";
 import MusicControl from "@/components/MusicControl";
 import { EASE } from "@/lib/animations";
@@ -67,6 +69,8 @@ export default function Page() {
         <EventDetails />
         <PhotoStory />
         <FinalMessage />
+        <ImagesDaily />
+        <WishesAndFarewell />
 
         <footer className="relative px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] text-center">
           <p className="text-[10px] uppercase tracking-[0.3em] text-ink/40">

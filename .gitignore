@@ -6,5 +6,6 @@ out/
 .env*
 .vercel
 
-# Thư mục ảnh gốc, không đưa vào build
-images-dayli/
+# Thư mục ảnh gốc ở gốc repo, không đưa vào build.
+# Cần dấu / ở đầu, nếu không sẽ khớp luôn public/images-daily/ do đã tối ưu.
+/images-daily/

@@ -53,14 +53,18 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           <span className="italic text-gold-deep">ONE</span>
         </motion.h1>
 
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.35, duration: 1 }}
-          className="mt-6 font-serif text-xl text-ink/90"
+          className="mt-7 flex flex-col items-center gap-3"
         >
-          {EVENT.babyName}
-        </motion.p>
+          <span className="h-px w-12 bg-gradient-to-r from-transparent to-gold/70" />
+          <p className="font-serif text-2xl leading-snug tracking-wide text-ink sm:text-[1.7rem]">
+            {EVENT.babyName}
+          </p>
+          <span className="h-px w-12 bg-gradient-to-l from-transparent to-gold/70" />
+        </motion.div>
 
         <motion.p
           initial={{ opacity: 0 }}
