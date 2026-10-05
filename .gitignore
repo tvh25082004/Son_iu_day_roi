@@ -5,3 +5,6 @@ out/
 .DS_Store
 .env*
 .vercel
+
+# Thư mục ảnh gốc, không đưa vào build
+images-dayli/
