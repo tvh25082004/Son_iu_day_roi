@@ -39,13 +39,14 @@ original-photos/ảnh gốc chưa nén
 
 Nhạc phát bằng thẻ `<audio>` HTML5 — trên điện thoại **chỉ có tiếng, không mở video YouTube**.
 
-Đặt file âm thanh vào `public/audio/son-birthday.mp3`, rồi khai báo trong `lib/config.ts`:
+**Bắt buộc:** đặt file âm thanh vào `public/audio/son-birthday.mp3` (repo có sẵn thư mục
+`public/audio/`). Trong `lib/config.ts`:
 
 ```ts
 audioSrc: "/audio/son-birthday.mp3",
 ```
 
-Tải nhạc từ YouTube (chạy khi mạng không bị YouTube chặn):
+Cách lấy nhạc (chạy ở nơi YouTube không chặn mạng):
 
 ```bash
 yt-dlp -f 140 -x --audio-format mp3 \
@@ -53,9 +54,15 @@ yt-dlp -f 140 -x --audio-format mp3 \
   "https://www.youtube.com/watch?v=8Fid-rNWeho"
 ```
 
-> Nếu chưa có file audio, `MusicControl` tự fallback sang iframe YouTube kích thước
-> **1×1** (bắt buộc, nếu không YouTube tạo iframe 640×390 và điện thoại sẽ mở app
-> YouTube). Xem `components/MusicControl.tsx`.
+Hoặc tải audio trên điện thoại rồi chép file thành `public/audio/son-birthday.mp3`.
+
+Nếu thiếu file, site vẫn chạy và fallback sang iframe YouTube kích thước **1×1**
+(bắt buộc phải 1×1, nếu không YouTube tạo iframe 640×390 và điện thoại sẽ mở app
+YouTube). Xem `components/MusicControl.tsx` và `lib/music.ts`.
+
+> iOS chỉ cho phát nhạc khi lệnh phát nằm trong user gesture, nên `lib/music.ts`
+> được gọi từ đúng handler của nút "Mở thiệp mời". Không chuyển sang `useEffect`
+> hoặc `setTimeout` — iOS sẽ bỏ qua và nhạc không lên.
 
 ## Sửa nội dung
 

@@ -28,8 +28,8 @@ export default function Hero() {
           className="mt-5 font-serif text-[17vw] leading-[1.02] text-ink sm:text-7xl"
         >
           <span className="block">Son</span>
-          <span className="block italic text-gold-deep">tròn</span>
-          <span className="block">1 TUỔI</span>
+          <span className="block italic text-gold-deep">is turning</span>
+          <span className="block">ONE</span>
         </motion.h1>
 
         {/* Ảnh hero — vòm sang trọng */}

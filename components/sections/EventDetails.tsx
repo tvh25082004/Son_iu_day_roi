@@ -11,7 +11,7 @@ export default function EventDetails() {
         <p className="text-[11px] font-semibold uppercase tracking-[0.4em] text-gold-deep">
           Ghi lịch
         </p>
-        <h2 className="mt-3 font-serif text-3xl text-ink sm:text-4xl">
+        <h2 className="mt-3 text-balance font-serif text-[1.6rem] leading-tight text-ink sm:text-[2.1rem]">
           Ngày 11 tháng 10 năm 2026
         </h2>
       </Reveal>

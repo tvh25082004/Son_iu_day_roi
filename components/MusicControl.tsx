@@ -3,6 +3,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion } from "motion/react";
 import { EVENT } from "@/lib/config";
+import { music } from "@/lib/music";
+
+const EQ_BARS = [
+  { id: "low", height: 10 },
+  { id: "mid", height: 14 },
+  { id: "high", height: 8 },
+];
 
 declare global {
   interface Window {
@@ -12,30 +19,39 @@ declare global {
 }
 
 /**
- * Nhạc nền.
+ * Nút bật/tắt nhạc nền.
  *
- * Ưu tiên file âm thanh nội bộ (public/audio) qua thẻ <audio>: trên điện
- * thoại iOS/Android chỉ có tiếng, không bao giờ mở app YouTube.
- *
- * Nếu thiếu file audio → fallback sang iframe YouTube. Bắt buộc phải truyền
- * width/height = 1, nếu không YouTube tạo iframe 640×390 và trên điện thoại
- * bị trình duyệt nâng thành video toàn màn hình / mở app YouTube.
+ * Nguồn phát ưu tiên là file mp3 trong public/audio (chỉ có tiếng, không bao
+ * giờ mở video YouTube). Nếu không có file thì fallback sang iframe YouTube —
+ * bắt buộc width/height = 1, nếu không YouTube tạo iframe 640×390 và điện
+ * thoại sẽ bị mở app YouTube.
  */
 export default function MusicControl({ start }: { start: boolean }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<any>(null);
-  const userPaused = useRef(false);
 
-  const [engine, setEngine] = useState<"local" | "youtube">(
-    EVENT.audioSrc ? "local" : "youtube"
-  );
+  const [playing, setPlaying] = useState(music.playing);
+  const [useFile, setUseFile] = useState(music.fileAvailable);
   const [ytReady, setYtReady] = useState(false);
-  const [playing, setPlaying] = useState(false);
 
-  /* ---------- YouTube fallback: nạp API một lần ---------- */
+  /* ---------- Kiểm tra file mp3 trước khi người dùng bấm ---------- */
   useEffect(() => {
-    if (engine !== "youtube" || typeof window === "undefined") return;
+    music.probe();
+  }, []);
+
+  /* ---------- Theo dõi trạng thái phát ---------- */
+  useEffect(
+    () =>
+      music.onState((p) => {
+        setPlaying(p);
+        setUseFile(music.fileAvailable);
+      }),
+    []
+  );
+
+  /* ---------- YouTube fallback: chỉ dựng khi thiếu file mp3 ---------- */
+  useEffect(() => {
+    if (useFile || typeof window === "undefined") return;
 
     if (window.YT?.Player) {
       setYtReady(true);
@@ -49,11 +65,10 @@ export default function MusicControl({ start }: { start: boolean }) {
       tag.async = true;
       document.head.appendChild(tag);
     }
-  }, [engine]);
+  }, [useFile]);
 
-  /* ---------- Tạo player 1×1 ---------- */
   useEffect(() => {
-    if (engine !== "youtube" || !ytReady) return;
+    if (useFile || !ytReady) return;
     if (playerRef.current || !hostRef.current) return;
 
     playerRef.current = new window.YT.Player(hostRef.current, {
@@ -78,8 +93,7 @@ export default function MusicControl({ start }: { start: boolean }) {
           } catch {}
         },
         onStateChange: (e: any) => {
-          if (e.data === 1) setPlaying(true);
-          if (e.data === 2 || e.data === 0) setPlaying(false);
+          music.setPlaying(e.data === 1);
         },
       },
     });
@@ -90,84 +104,50 @@ export default function MusicControl({ start }: { start: boolean }) {
       } catch {}
       playerRef.current = null;
     };
-  }, [engine, ytReady]);
+  }, [useFile, ytReady]);
 
-  const play = useCallback(() => {
-    userPaused.current = false;
-    if (engine === "local") {
-      const a = audioRef.current;
-      if (!a) return;
-      a.volume = 0.45;
-      a.play().catch(() => {});
-      return;
-    }
+  /* ---------- Nhận lệnh phát từ bus (khi không có file mp3) ---------- */
+  const actOnPlayer = useCallback((cmd: "play" | "pause" | "toggle") => {
+    const p = playerRef.current;
+    if (!p) return;
+    const isOn = playing;
     try {
-      playerRef.current?.playVideo();
+      if (cmd === "play" || (cmd === "toggle" && !isOn)) p.playVideo();
+      else p.pauseVideo();
     } catch {}
-  }, [engine]);
+  }, [playing]);
 
-  const pause = useCallback(() => {
-    userPaused.current = true;
-    if (engine === "local") {
-      audioRef.current?.pause();
-      return;
-    }
-    try {
-      playerRef.current?.pauseVideo();
-    } catch {}
-  }, [engine]);
+  useEffect(() => music.onCommand(actOnPlayer), [actOnPlayer]);
 
-  /* ---------- Thử bật nhạc khi mở thiệp ----------
-   * iOS chỉ cho autoplay trong user gesture, nên nếu bị chặn thì icon vẫn hiện
-   * trạng thái tắt và người dùng bấm một cái là nghe được. */
-  useEffect(() => {
-    if (!start) return;
-    if (engine === "local") {
-      const a = audioRef.current;
-      if (!a) return;
-      a.volume = 0.45;
-      a.play()
-        .then(() => setPlaying(true))
-        .catch(() => setPlaying(false));
-      return;
-    }
-    if (!ytReady || !playerRef.current) return;
-    try {
-      playerRef.current.playVideo();
-    } catch {}
-  }, [start, engine, ytReady]);
-
-  /* ---------- Người dùng bật/tắt ---------- */
   const toggle = () => {
     if (playing) {
-      pause();
+      music.send("pause");
       setPlaying(false);
     } else {
-      play();
+      music.send("play");
       setPlaying(true);
     }
   };
 
-  const EQ_BARS = [10, 14, 8];
-
   return (
     <>
-      {/* Nguồn âm thanh nội bộ — không có giao diện, chỉ phát nhạc */}
+      {/* Nguồn phát chính: file mp3 nội bộ, không giao diện, không redirect */}
       <audio
-        ref={audioRef}
+        ref={(el) => {
+          if (el) el.volume = 0.45;
+          music.register(el);
+        }}
         src={EVENT.audioSrc}
         loop
         preload="auto"
         playsInline
-        onError={() => setEngine("youtube")}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-      >
-        <source src={EVENT.audioSrc} type="audio/mpeg" />
-      </audio>
+        onPlay={() => music.setPlaying(true)}
+        onPause={() => music.setPlaying(false)}
+        onError={() => music.markFileMissing()}
+      />
 
-      {/* Fallback YouTube: iframe 1×1, nằm ngoài màn hình, không bấm được */}
-      {engine === "youtube" && (
+      {/* Fallback YouTube: iframe 1×1, ngoài màn hình, không bấm được */}
+      {!useFile && (
         <div
           aria-hidden
           className="pointer-events-none fixed bottom-0 left-0 z-0 h-px w-px overflow-hidden opacity-0"
@@ -190,11 +170,11 @@ export default function MusicControl({ start }: { start: boolean }) {
           whileTap={{ scale: 0.9 }}
         >
           <span className="flex items-end gap-[2.5px]" aria-hidden>
-            {EQ_BARS.map((h, i) => (
+            {EQ_BARS.map((bar, i) => (
               <span
-                key={h + i}
+                key={bar.id}
                 style={{
-                  height: h,
+                  height: bar.height,
                   ...(playing
                     ? { animation: `eq 0.9s ease-in-out ${i * 0.25}s infinite` }
                     : {}),

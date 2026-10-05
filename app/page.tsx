@@ -13,13 +13,19 @@ import FloatingParticles from "@/components/FloatingParticles";
 import MusicControl from "@/components/MusicControl";
 import { EASE } from "@/lib/animations";
 import { EVENT } from "@/lib/config";
+import { music } from "@/lib/music";
 
 type Stage = "cover" | "opening" | "open";
 
 export default function Page() {
   const [stage, setStage] = useState<Stage>("cover");
 
-  const open = () => setStage("opening");
+  // iOS chỉ cho phát nhạc khi lệnh phát nằm trong user gesture, nên phải gọi
+  // music.send ngay trong handler của nút bấm chứ không gọi trong useEffect.
+  const open = () => {
+    music.send("play");
+    setStage("opening");
+  };
 
   return (
     <main className="relative min-h-screen overflow-x-clip">
