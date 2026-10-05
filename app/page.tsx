@@ -12,6 +12,7 @@ import FinalMessage from "@/components/sections/FinalMessage";
 import FloatingParticles from "@/components/FloatingParticles";
 import MusicControl from "@/components/MusicControl";
 import { EASE } from "@/lib/animations";
+import { EVENT } from "@/lib/config";
 
 type Stage = "cover" | "opening" | "open";
 
@@ -37,7 +38,7 @@ export default function Page() {
 
         <footer className="relative px-6 pb-[calc(env(safe-area-inset-bottom)+2rem)] text-center">
           <p className="text-[10px] uppercase tracking-[0.3em] text-ink/40">
-            Son ✦ 2026 ✦ Made with love
+            Son ✦ {EVENT.year} ✦ Made with love
           </p>
         </footer>
       </motion.div>

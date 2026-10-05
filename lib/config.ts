@@ -1,6 +1,7 @@
 export const EVENT = {
   babyName: "Lê Nguyễn Khánh Đăng",
   nickName: "Son",
+  year: "2026",
   displayDate: "11 • 10 • 2026",
   eventISO: "2026-10-11T18:00:00+07:00",
   timeLabel: "18:00",
