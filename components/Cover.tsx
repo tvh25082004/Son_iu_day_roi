@@ -46,7 +46,11 @@ export default function Cover({ onOpen }: { onOpen: () => void }) {
           transition={{ delay: 0.95, duration: 1.1, ease: EASE }}
           className="mt-5 font-serif text-[2.6rem] leading-tight sm:text-5xl"
         >
-          is turning <span className="italic text-gold-deep">ONE</span>
+          Son
+          <br />
+          is turning
+          <br />
+          <span className="italic text-gold-deep">ONE</span>
         </motion.h1>
 
         <motion.p
