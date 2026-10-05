@@ -8,6 +8,8 @@ let node: HTMLAudioElement | null = null;
 let playing = false;
 /** Các file tồn tại thật trên server, theo thứ tự ưu tiên. */
 let available: string[] = [];
+/** Đã kiểm tra tới ứng viên nào trong AUDIO_CANDIDATES. */
+let probed = 0;
 /** Vị trí đang thử trong `available`. */
 let cursor = -1;
 /** Người dùng đã chạm màn hình → nhạc phải chạy, kể cả khi file vừa tìm thấy. */
@@ -35,21 +37,26 @@ export const AUDIO_CANDIDATES: string[] = EVENT.audioSrc
     ]
   : [];
 
-/** Kiểm tra những file nào thực sự tồn tại trên server. */
-async function probeAll(): Promise<string[]> {
-  const found: string[] = [];
-  await Promise.all(
-    AUDIO_CANDIDATES.map(async (src) => {
-      try {
-        const res = await fetch(src, { method: "HEAD", cache: "no-store" });
-        if (res.ok) found.push(src);
-      } catch {
-        // file không tồn tại — bỏ qua
+/**
+ * Kiểm tra ứng viên kế tiếp xem có tồn tại không, dừng ngay khi tìm thấy.
+ *
+ * Dò tuần tự chứ không dò song song: trường hợp thường (đã có son-birthday.mp3)
+ * chỉ phát đúng một request HEAD, nên console sạch, không lỗi 404 vô nghĩa.
+ */
+async function probeNext(): Promise<boolean> {
+  while (probed < AUDIO_CANDIDATES.length) {
+    const src = AUDIO_CANDIDATES[probed++];
+    try {
+      const res = await fetch(src, { method: "HEAD", cache: "no-store" });
+      if (res.ok) {
+        available.push(src);
+        return true;
       }
-    })
-  );
-  // Giữ đúng thứ tự ưu tiên đã khai báo.
-  return AUDIO_CANDIDATES.filter((src) => found.includes(src));
+    } catch {
+      // file không tồn tại — thử ứng viên kế tiếp
+    }
+  }
+  return false;
 }
 
 /**
@@ -76,17 +83,13 @@ function loadNext(): boolean {
 async function init(): Promise<boolean> {
   if (typeof window === "undefined") return false;
 
-  if (available.length === 0) {
-    available = await probeAll();
-    if (available.length === 0) {
-      console.warn(
-        "[nhạc nền] Chưa có file âm thanh nào trong public/audio/. " +
-          "Cần file tên bắt đầu bằng `son-birthday` (mp3/m4a/mp4/aac/ogg/wav). " +
-          "Xem README."
-      );
-      return false;
-    }
-    cursor = -1;
+  if (available.length === 0 && !(await probeNext())) {
+    console.warn(
+      "[nhạc nền] Chưa có file âm thanh nào trong public/audio/. " +
+        "Cần file tên bắt đầu bằng `son-birthday` (mp3/m4a/mp4/aac/ogg/wav). " +
+        "Xem README."
+    );
+    return false;
   }
 
   return loadNext();
@@ -94,10 +97,14 @@ async function init(): Promise<boolean> {
 
 /**
  * File vừa nạp không phát được (trình duyệt không giải mã được định dạng đó).
- * Thử file tiếp theo; hết danh sách thì báo thiếu file.
+ * Dò thêm file khác rồi thử; trả về true nếu đã hết lựa chọn.
  */
-function handleError(): Promise<boolean> {
-  return init().then((ok) => !ok);
+async function handleError(): Promise<boolean> {
+  if (await probeNext()) {
+    loadNext();
+    return false;
+  }
+  return !loadNext();
 }
 
 /**
