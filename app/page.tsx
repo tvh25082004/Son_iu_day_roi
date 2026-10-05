@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Cover from "@/components/Cover";
 import EnvelopeOpening from "@/components/EnvelopeOpening";
@@ -19,11 +19,35 @@ type Stage = "cover" | "opening" | "open";
 
 export default function Page() {
   const [stage, setStage] = useState<Stage>("cover");
+  const gestureRef = useRef(false);
 
-  // iOS chỉ cho phát nhạc khi lệnh phát nằm trong user gesture, nên phải gọi
-  // music.send ngay trong handler của nút bấm chứ không gọi trong useEffect.
-  const open = () => {
+  // iOS chỉ cho phát nhạc khi lệnh phát nằm trong user gesture. Người dùng có
+  // thể chạm bất kỳ đâu trên màn hình (kể cả lúc đang xem bìa thiệp) để bắt đầu
+  // nhạc, nên nghe bắt kỳ chạm nào cũng gửi lệnh phát. Mọi chạm sau đó bị bỏ qua
+  // để không phát lại từ đầu.
+  const primeAudio = useCallback(() => {
+    if (gestureRef.current) return;
+    gestureRef.current = true;
     music.send("play");
+  }, []);
+
+  useEffect(() => {
+    const opts = { passive: true } as const;
+    const targets: Array<EventTarget | null> = [
+      window,
+      document,
+      document.body,
+    ];
+    targets.forEach((t) => t?.addEventListener("touchend", primeAudio, opts));
+    targets.forEach((t) => t?.addEventListener("click", primeAudio, opts));
+    return () => {
+      targets.forEach((t) => t?.removeEventListener("touchend", primeAudio));
+      targets.forEach((t) => t?.removeEventListener("click", primeAudio));
+    };
+  }, [primeAudio]);
+
+  const open = () => {
+    primeAudio();
     setStage("opening");
   };
 
@@ -49,7 +73,7 @@ export default function Page() {
         </footer>
       </motion.div>
 
-      <MusicControl start={stage !== "cover"} />
+      <MusicControl />
 
       <AnimatePresence>
         {stage === "cover" && <Cover key="cover" onOpen={open} />}

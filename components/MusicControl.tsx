@@ -18,7 +18,7 @@ const EQ_BARS = [
  * Cố tình KHÔNG nhúng YouTube: khi mở link từ Zalo/Messenger, các app này
  * dùng WKWebView và sẽ tự mở video YouTube toàn màn hình rồi không phát nhạc.
  */
-export default function MusicControl({ start }: { start: boolean }) {
+export default function MusicControl() {
   const [playing, setPlaying] = useState(false);
   const [missing, setMissing] = useState(false);
 
@@ -58,7 +58,7 @@ export default function MusicControl({ start }: { start: boolean }) {
         onError={handleError}
       />
 
-      {start && !missing && (
+      {!missing && (
         <motion.button
           type="button"
           onClick={toggle}
